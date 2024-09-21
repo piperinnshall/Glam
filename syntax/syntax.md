@@ -23,10 +23,16 @@ The `print()` and `println()` functions are used to output values/text.
 # Variables
 
 To create a variable, use `let` and assign it to a value with the equals sign.
-By default, variables are immutable.
+By default, variables are implicitly immutable.
 
 ```
 let variableName = value
+```
+
+Use the `immut` keyword to explicitly define an immutable variable.
+
+```
+let immut variableName = value
 ```
 
 Use the `mut` keyword to create a mutable variable.
@@ -107,26 +113,47 @@ let result = if condition expression1 else expression2
 
 # When
 
-there are 2 different types of when expressions.
+there are multiple different types of when expressions.
 
-## Regular when expression.
+## When expression.
+
+A when expression is a powerful control flow construct that allows you to handle multiple conditions.
 
 ```
-let day = 4
-
-let whichDay int = when day { 
-    1 -> "Monday"
-    2 -> "Tuesday"
-    3 -> "Wednesday"
-    4 -> "Thursday"
-    5 -> "Friday"
-    6 -> "Saturday"
-    7 -> "Sunday"
-    else -> "Not a Day"
-}
-
 main () = { 
-    whichDay(1) 
+    let day = 4
+
+    let whichDay str = when day { 
+        1 -> "Monday"
+        2 -> "Tuesday"
+        3 -> "Wednesday"
+        4 -> "Thursday"
+        5 -> "Friday"
+        6 -> "Saturday"
+        7 -> "Sunday"
+        else -> "Not a Day"
+    }
+
+    print(whichDay)
+}
+```
+
+## Anonymous when expression
+
+Anonymous when expressions are when expressions that are not assigned to a variable. 
+
+```
+main () = { 
+    when day { 
+        1 -> print("Monday")
+        2 -> print("Tuesday")
+        3 -> print("Wednesday")
+        4 -> print("Thursday")
+        5 -> print("Friday")
+        6 -> print("Saturday")
+        7 -> print("Sunday")
+        else -> print("Not a Day")
+    }
 }
 ```
 
@@ -216,12 +243,13 @@ let myList int = [0, 1, 2, 3]
 
 # Lambda functions
 
-A lambda function is a block of code that can be reused.
+A lambda function is a block of code that can be reused. Lambdas are immmutable,
+which means the function logic inside a lambda cannot be changed.
 Lambdas can be used in the local, top-level, and global scobes.
 This means that you can define a lambda function inside of a lambda function.
 Lambdas can be named or anonymous, but anonymous lambdas can only be used in the local scope.
 
-## Named lambda
+## Named lambda function
 
 A named lambda is a variable where the type is specified as lambda.
 This is denoted by the open and closed parentheses `()`
@@ -273,10 +301,9 @@ main () = {
 }
 ```
 
-# Anonymous lambda function
+## Anonymous lambda function
 
-An anonymous lambda is similar to a lambda, except it can only be used in the local scope.
-Anonymous lambdas are lambda functions that do not have names. 
+Anonymous lambdas are lambda functions that are not assigned to a variable. 
 They can be used to implement one time usage code in the local scope.
 Anonymous lambdas invoke themselves, by placing parentheses after the code block.
 
@@ -289,7 +316,7 @@ main () = {
 }
 ```
 
-# Unit lambda function
+## Unit lambda function
 
 A unit lambda function is a special type of lambda that does not return a result.
 This means that the defined output type is `unit`.
@@ -323,7 +350,7 @@ main () = {
 }
 ```
 
-# Curried lambda function
+## Curried lambda function
 
 Currying is the process of transforming a function that takes multiple arguments
 into a series of functions, each taking a single argument.
@@ -362,48 +389,101 @@ main () = {
 }
 ```
 
-# Modifing lamda funcions
+## Modifing lamda funcions
+
+`mod` keyword
 
 # Structs
 
+Structs, short for structures, are a composite data type that allows you to group variables. 
+They can be immutable or mutable. You can create an instance of a struct and access its fields using dot notation. 
+You can read the fields of any struct instance, but you can only modify them if the struct instance is mutable.
+You may omit fields from instances of structs, but you may not define new variables in instances of structs.
+Variables can only be defined in the top level struct, but can be given values in any instance of the struct.
+
+## Immutable struct 
+
+The fields are readable, but not modifiable.
+The variables x and y are defined in the top level struct, and given values in the instance of the struct.
+Variables in immutable structs can be marked as mutable using the `mut` keyword
+
 ```
-let Player struct = {
-    let health int
-    let x double
+struct Point {
+    let mut x double
     let y double
-    let printName () -> unit
-    let moveX (int) -> unit
-    let moveY (int) -> unit
-    let updateHealth (int) -> unit
+    let add (double, double) -> double = x, y -> x + y
 }
 
-player1 Player = {
-    health = 100,
-}
-
-let createPlayer (int, int) -> Player = { xStart, yStart ->
-    {
-        x = xStart,
-        y = yStart,
-        printName = print("player1"),
-        
-        moveX = dx -> x + dx,
-        moveX = dx -> x + dx,
-        updateHealth = dmg -> this.health - dmg
-    }
+let point1 Point = {
+    x = 0
+    y = 0
 }
 
 main () = {
-    player1.health(100)
-    print(player1.health)
-
-    let player2 = createPlayer(5, 5)
-    player2.moveX(3)
-    player2.moveY(3)
-    player2.updateHealth(10)
-    player2.printName()
-    print(player2.x)
-    print(player2.y)
-    print(player2.health)
+    point1.x = 1
+    print(point1.x)
+    print(point1.y)
+    print(add(point1.x, point1,y))
 }
 ```
+
+## Mutable struct 
+
+The fields are readable, and modifiable. All fields are mutable by default.
+Variables in mutable structs can be marked as immutable using the `immut` keyword
+
+```
+struct Point {
+    let x double
+    let immut y double
+    let add (double, double) -> double = x, y -> x + y
+}
+
+let mut point1 Point = {
+    x = 0
+    y = 0
+}
+
+main () = {
+    point1.x = 1 
+    point1.y = 1 // This will cause an error because y is immutable  
+    print(add(point1.x, point1,y))
+}
+```
+
+> [!important]
+>
+> Lambda functions are immutable, even when in a mutable struct, unless the mod keyword is used.
+
+## Lambda function that returns a struct
+
+Lambda functions can return an instance of a struct.
+
+```
+struct Point = {
+    let x double
+    let y double
+    let add (double, double) -> double 
+}
+
+let newPoint (int) -> Point = {
+    let mut point Point = {
+        x = $
+        y = 0
+        add = x, y -> x + y
+    }
+    point
+}
+
+main () = {
+    point = newPoint(1)
+
+    print(point.x) // prints 1
+    print(point.y) // prints 0
+    point.y = 1
+    print(point.y) // prints 1
+    print(add(point.x, point.y)) // prints 2
+}
+```
+
+# Enums 
