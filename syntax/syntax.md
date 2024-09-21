@@ -1,6 +1,6 @@
 # Main
 
-This is the entrance to your code
+This is the entrance to your code.
 
 ```
 main () = {
@@ -259,7 +259,7 @@ Lambdas can be passed parameters inside of the parentheses, or the lambda type.
 The code block, or body expression, that processes the lambdas is defined by the curly brackets.
 
 This is a variable called myLambda with a type of `(int)` (a lambda that takes an integer as a parmater), 
-and a return type of int, as well as an empty code block
+and a return type of int, as well as an empty code block.
 
 ```
 let myLambda (int) -> int = {}
@@ -269,7 +269,7 @@ Lamdas have implicit returns. The result of the last evaluated expression is aut
 This means that an explicit return statement is not needed.
 Lambdas also have an implicit parameter placeholder `$` if there is only one parameter.
 
-The code below will output `2`
+The code below will output `2`.
 
 ```
 let myLambda (int) -> int = {
@@ -391,7 +391,22 @@ main () = {
 
 ## Modifing lamda funcions
 
-`mod` keyword
+The mod keyword allows you to modify the code block of an existing lambda function without changing its type.
+This is particularly useful for altering the behavior of a lambda without needing to redefine it completely.
+
+```
+let myLambda (int) -> int = {
+    $ + 1
+}
+
+mod myLambda = {
+    $ - 1
+}
+
+main () = {
+    print(myLambda(2)) // This will output 1 (2 - 1)
+}
+```
 
 # Structs
 
@@ -405,7 +420,7 @@ Variables can only be defined in the top level struct, but can be given values i
 
 The fields are readable, but not modifiable.
 The variables x and y are defined in the top level struct, and given values in the instance of the struct.
-Variables in immutable structs can be marked as mutable using the `mut` keyword
+Variables in immutable structs can be marked as mutable using the `mut` keyword.
 
 ```
 struct Point {
@@ -430,16 +445,16 @@ main () = {
 ## Mutable struct 
 
 The fields are readable, and modifiable. All fields are mutable by default.
-Variables in mutable structs can be marked as immutable using the `immut` keyword
+Variables in mutable structs can be marked as immutable using the `immut` keyword.
 
 ```
-struct Point {
+mut struct Point {
     let x double
     let immut y double
     let add (double, double) -> double = x, y -> x + y
 }
 
-let mut point1 Point = {
+let point1 Point = {
     x = 0
     y = 0
 }
@@ -460,14 +475,14 @@ main () = {
 Lambda functions can return an instance of a struct.
 
 ```
-struct Point = {
+mut struct Point = {
     let x double
     let y double
     let add (double, double) -> double 
 }
 
 let newPoint (int) -> Point = {
-    let mut point Point = {
+    let point Point = {
         x = $
         y = 0
         add = x, y -> x + y
