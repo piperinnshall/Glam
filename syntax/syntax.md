@@ -57,8 +57,8 @@ myStr str = "Hello
 ## Operators
 
 ```glam
-=   ==
 +-*/%
+=   ==
 !   !=
 <   <=
 >   >=
