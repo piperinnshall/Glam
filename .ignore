@@ -1,0 +1,13 @@
+gradlew
+gradlew.bat
+
+.gradle/
+.settings/
+
+build/
+gradle/
+
+app/.*
+app/bin/
+**/*.png
+
