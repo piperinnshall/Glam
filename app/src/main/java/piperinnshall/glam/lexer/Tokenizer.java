@@ -19,8 +19,8 @@ public interface Tokenizer {
   private static LinkedList<Token> readAll(BufferedReader r) throws IOException{
     LinkedList<Token> ls= (LinkedListEmpty<Token>)x->x;
     String line;
-    while ((line = r.readLine()) != null) {
-      ls= ls.add(Token.of(TokenType.LIT,line,0,0));
+    while ((line= r.readLine())!=null) {
+      ls= ls.add(Token.of(TokenType.TRUE,line,0,0));
     }
     return ls;
   }
