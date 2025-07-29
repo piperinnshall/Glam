@@ -366,7 +366,7 @@ safeDiv fn:ok*int|err*str = (x, y int*int) -> when x, y { ... }
 
 ## Example: Two Sum
 
-```glam
+```
 nums [int] = 2, 7, 11, 15
 target int = 9
 
