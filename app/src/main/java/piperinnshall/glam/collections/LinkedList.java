@@ -19,15 +19,13 @@ public interface LinkedList<T> {
     return match(()->orElse,(_,tail)->tail);
   }
   default LinkedList<T> reverse() {
-    return reverseHelper(this, (LinkedListEmpty<T>)s->s);
+    return reverseHelper(this,(LinkedListEmpty<T>)s->s);
   }
   private static <T> LinkedList<T> reverseHelper(LinkedList<T> list, LinkedList<T> acc) {
     return list.match(()->acc,(head, tail)->reverseHelper(tail, acc.add(head)));
   }
   default Tuple0 forEach(Consumer<T> c){
-    return match(() -> (Tuple0)this,
-      (head, tail) -> {c.accept(head);return tail.forEach(c);} 
-    );
+    return match(()->(Tuple0)this,(head,tail)->{c.accept(head);return tail.forEach(c);});
   }
 }
 

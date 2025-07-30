@@ -13,15 +13,39 @@ public interface Tokenizer {
   abstract Path path();
   default LinkedList<Token> tokenize() {
     try(BufferedReader reader= Files.newBufferedReader(this.path())){
-      return readAll(reader);
-    }catch(IOException e){e.printStackTrace();return (LinkedListEmpty<Token>)x->x;}
+      return TokenizeFile.tokenize(reader);
+    }catch(IOException e){e.printStackTrace();}
+    return (LinkedListEmpty<Token>)x->x;
   }
-  private static LinkedList<Token> readAll(BufferedReader r) throws IOException{
+
+}
+
+interface TokenizeFile{
+  static LinkedList<Token> tokenize(BufferedReader r) throws IOException{
     LinkedList<Token> ls= (LinkedListEmpty<Token>)x->x;
     String line;
+    int lineNum= 0;
     while ((line= r.readLine())!=null) {
-      ls= ls.add(Token.of(TokenType.TRUE,line,0,0));
+      int curTokenLen = 0;
+
+      for (int colNum= 0;colNum<line.length();colNum++) {
+        int mark = colNum;
+
+        char c = line.charAt(colNum);
+
+        if (Character.isWhitespace(c)) continue;
+
+        ls= nLengthToken(ls,""+c,lineNum,colNum);
+      }
+
+      lineNum++;
     }
+    return ls;
+  }
+
+  private static LinkedList<Token> nLengthToken(LinkedList<Token> ls, String s, int lineNum, int colNum){
+    TokenType t= TokenType.fromString(s);
+    if(t!=null)return ls.add(Token.of(t,s,lineNum,colNum));
     return ls;
   }
 }

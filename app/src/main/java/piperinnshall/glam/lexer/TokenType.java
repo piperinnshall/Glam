@@ -7,7 +7,6 @@ public enum TokenType {
   STRING(null),
   CHAR(null),
   BOOL(null),
-  UNIT(null),
   // Keywords with their string representations
   TRUE("true"),
   FALSE("false"),
@@ -47,18 +46,15 @@ public enum TokenType {
   USCORE("_"),
   GUARD("?"),
   // Comments and white space
-  COMMENT("--"),
-  BLKCOMMENT("-[-]"),
-  WHITESPACE(null),
-  NEWLINE(null);
+  COMMENT("--");
 
   private final String text;
   TokenType(String text){this.text= text;}
   public String text(){return text;}
   public static TokenType fromString(String text){
     return java.util.Arrays.stream(values())
-      .filter(t -> t.text != null && t.text.equals(text))
+      .filter(t -> t.text!=null && t.text.equals(text))
       .findFirst()
-      .orElse(IDENTIFIER);
+      .orElse(null);
   }
 }
