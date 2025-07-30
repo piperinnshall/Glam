@@ -29,7 +29,7 @@ public interface LinkedList<T> {
   }
 }
 
-interface Cons<T> extends Tuple2<T,LinkedList<T>>, LinkedList<T>{
+interface Cons<T> extends Tuple2<T,LinkedList<T>>,LinkedList<T>{
   default <R> R match(Supplier<R>onEmpty, BiFunction<T,LinkedList<T>,R>onCons){
     return onCons.apply(this.a(),this.b());
   }
