@@ -8,7 +8,12 @@ public class App {
     Tokenizer t= ()->((Resource)()->"test.txt").get();
     t.tokenize()
       .reverse()
-      .forEach(x->System.out.printf("%-40s %s%n",x.value(),x.tokenType()));
+      .forEach(x->System.out.print(x.tokenType()+" "));
+    System.out.println();
+    System.out.println();
+    t.tokenize()
+      .reverse()
+      .forEach(x->System.out.print(x.value()));
   }
 }
 

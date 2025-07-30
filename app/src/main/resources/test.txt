@@ -1,1 +1,22 @@
-==$*=->true192.7- Afalse--self{}out123"test\n{selfout}"
+isPrime = (int) -> $ {
+    ? $ < 2 -> false
+    _ -> (d int) -> d {
+        ? d * d > $ -> true
+        ? $ % d == 0 -> false
+        _ -> self(d + 1)
+    }(2)
+}
+sum = ([int]) -> {
+    [] -> 0
+    [x] -> x
+    [x, y] -> x + y
+    _ -> head($) + self(tail($))
+}
+filterPrimes = ([int]) -> filter(isPrime)($)
+process = ([int]) -> {
+    primes [int] = filterPrimes($)
+    sum(primes)/(length(primes)
+}
+input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+main = out { "Input: {input}, Filtered Primes: {filterPrimes(input)}, Result: {process(input)}" }
+

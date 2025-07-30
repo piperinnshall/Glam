@@ -293,6 +293,10 @@ describe = ([int]) -> $ {
 
 ---
 
+# *End of Specification*
+
+---
+
 `TODO:`
 
 ## Tuples
@@ -326,8 +330,6 @@ pass = (a, b, c int*int*int) -> {
     a + b + c
 }
 ```
-
-# *End of Specification*
 
 -----
 

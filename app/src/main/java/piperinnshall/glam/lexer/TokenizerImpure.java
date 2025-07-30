@@ -61,7 +61,6 @@ public interface TokenizerImpure {
     if (!s.isEmpty()) return Optional.of(Token.of(TokenType.IDENTIFIER, s, lineNum, startCol));
     return Optional.empty();
   }
-
   private static Optional<Token> findLitNum(String line, int colNum, int lineNum) {
     if (!Character.isDigit(line.charAt(colNum))) return Optional.empty();
     boolean seenDot = false;
