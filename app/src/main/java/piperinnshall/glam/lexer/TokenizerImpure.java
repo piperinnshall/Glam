@@ -121,6 +121,7 @@ public interface TokenizerImpure {
       }
       s += c; colNum++;
     }
-    return Optional.of(Token.of(TokenType.LIT_STR_INVALID, s, lineNum, startCol));
+    if (!s.isEmpty()) return Optional.of(Token.of(TokenType.LIT_STR_INVALID, s, lineNum, startCol));
+    return Optional.empty();
   }
 }
