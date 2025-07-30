@@ -8,9 +8,6 @@ import piperinnshall.glam.collections.LinkedList;
 import piperinnshall.glam.collections.LinkedListEmpty;
 import piperinnshall.glam.tuple.Token;
 
-/*
- * I wish tail recursion in Java was optimized.
- */
 public interface TokenizerImpure {
   static LinkedList<Token> tokenize(BufferedReader r) throws IOException{
     LinkedList<Token> tokens= (LinkedListEmpty<Token>)x->x;

@@ -61,7 +61,6 @@ variableName = value
 int
 float
 bool
-char
 str
 fn
 ```
@@ -328,7 +327,7 @@ pass = (a, b, c int*int*int) -> {
 }
 ```
 
-*End of Specification*
+# *End of Specification*
 
 -----
 
@@ -397,7 +396,6 @@ main = twoSum()
 * Errors and option types are built into the type system.
 
 ---
-
 
 `TODO:`
 - Finish tuple destructuring

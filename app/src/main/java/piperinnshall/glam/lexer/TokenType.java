@@ -8,16 +8,14 @@ public enum TokenType {
   // Literals
   LIT_NUM(null),
   LIT_STR(null),
-  LIT_CHAR(null),
+  LIT_STR_INVALID(null),
   //Types
   INT("int"),
   FLOAT("float"),
   STR("str"),
-  CHAR("char"),
   // Keywords
   TRUE("true"),
   FALSE("false"),
-  WHEN("when"),
   OUT("out"),
   MAIN("main"),
   SELF("self"),
