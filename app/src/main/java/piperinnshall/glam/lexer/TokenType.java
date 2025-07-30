@@ -47,10 +47,16 @@ public enum TokenType {
   GUARD("?"),
   // Comments and white space
   COMMENT("--");
-
   private final String text;
   TokenType(String text){this.text= text;}
   public String text(){return text;}
+  public static int longestTokenLength() {
+    return java.util.Arrays.stream(values())
+      .filter(t -> t.text != null)
+      .mapToInt(t -> t.text.length())
+      .max()
+      .orElse(0);
+  }
   public static TokenType fromString(String text){
     return java.util.Arrays.stream(values())
       .filter(t -> t.text!=null && t.text.equals(text))

@@ -21,41 +21,30 @@ public interface Tokenizer {
 
 interface TokenizeFile {
   static LinkedList<Token> tokenize(BufferedReader r) throws IOException {
-    LinkedList<Token> ls = (LinkedListEmpty<Token>) x -> x;
+    LinkedList<Token> ls= (LinkedListEmpty<Token>)x->x;
     String line;
-    int lineNum = 0;
-    while ((line = r.readLine()) != null) {
-      int curTokenLen = 0;
+    int lineNum= 0;
+    while ((line = r.readLine())!=null){
 
-      for (int colNum = 0; colNum < line.length();) {
+      for (int colNum = 0; colNum < line.length();){
         Token token = null;
 
-        if (colNum + 2 <= line.length()) {
-          String sub = line.substring(colNum, colNum + 2);
+        for(int len= TokenType.longestTokenLength();len>0;len--){
+          if (colNum + len > line.length()) continue;
+          String sub = line.substring(colNum, colNum + len);
           TokenType t = TokenType.fromString(sub);
-          if (t!=null) {
-            token= Token.of(t, sub, lineNum, colNum);
-            colNum+=2;
-            ls = ls.add(token);
-            continue;
-          }
+          if (t == null) continue;
+          token = Token.of(t, sub, lineNum, colNum);
+          colNum += len;
+          break;        
         }
 
-        if (colNum + 1 <= line.length()) {
-          String sub = line.substring(colNum, colNum + 1);
-          TokenType t = TokenType.fromString(sub);
-          if (t!=null) {
-            token = Token.of(t, sub, lineNum, colNum);
-            colNum += 1;
-            ls = ls.add(token);
-            continue;
-          }
-        }
-
-        colNum++;      }
-
+        if (token != null) ls = ls.add(token);
+        else colNum++;
+      }
       lineNum++;
     }
     return ls;
   }
+
 }
