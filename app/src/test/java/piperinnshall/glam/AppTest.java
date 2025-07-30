@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class AppTest {
   @Test
   void testCreateToken() {
-    TokenType t= TokenType.LIT;String v= "42";int l= 15;int c= 17;
+    TokenType t= TokenType.NUMBER;String v= "42";int l= 15;int c= 17;
     Token token= Token.of(t,v,l,c);
     assertEquals(t,token.tokenType(),"Token type should be: "+t);
     assertEquals(v,token.value(),"Token value should be: "+v);

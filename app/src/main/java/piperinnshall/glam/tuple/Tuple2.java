@@ -1,16 +1,16 @@
 package piperinnshall.glam.tuple;
 
 public interface Tuple2<A,B>{
-  public static <A,B> Tuple2<A,B> of(final A a,final B b){
+  public static <A,B> Tuple2<A,B> of(A a,B b){
     return sel -> sel.apply(a,b);
   }
   Tuple2Union<A,B> apply(Tuple2Selector<A,B> sel);
   default A a(){
-    final Tuple2Selector<A,B> sel=(a,_)->(FromA<A,B>)()->a;
+    Tuple2Selector<A,B> sel=(a,_)->(FromA<A,B>)()->a;
     return this.apply(sel).toA();
   }
   default B b(){
-    final Tuple2Selector<A,B> sel=(_,b)->(FromB<A,B>)()->b;
+    Tuple2Selector<A,B> sel=(_,b)->(FromB<A,B>)()->b;
     return this.apply(sel).toB();
   }
 }

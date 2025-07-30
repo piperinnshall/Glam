@@ -7,11 +7,11 @@ import java.nio.file.Path;
 public interface Resource {
   abstract String file();
   default Path get(){return Path.of(uri(file()));}
-  private URI uri(final String file){
+  private URI uri(String file){
      return switch(0){
        default->{
         try{yield Resource.class.getClassLoader().getResource(file).toURI();}
-        catch(final URISyntaxException _){yield null;}
+        catch(URISyntaxException _){yield null;}
        }
     };
   }

@@ -1,13 +1,15 @@
 package piperinnshall.glam.lexer;
 
+import java.util.Arrays;
+
 public enum TokenType {
   IDENTIFIER(null),
+  INVALID(null),
   // Literals
   NUMBER(null),
   STRING(null),
   CHAR(null),
-  BOOL(null),
-  // Keywords with their string representations
+  // Keywords
   TRUE("true"),
   FALSE("false"),
   WHEN("when"),
@@ -46,19 +48,20 @@ public enum TokenType {
   USCORE("_"),
   GUARD("?"),
   // Comments and white space
-  COMMENT("--");
+  COMMENT("--"),
+  WHITESPACE(" "),
+  NEWLINE(null);
   private final String text;
   TokenType(String text){this.text= text;}
-  public String text(){return text;}
   public static int longestTokenLength() {
-    return java.util.Arrays.stream(values())
+    return Arrays.stream(values())
       .filter(t -> t.text != null)
       .mapToInt(t -> t.text.length())
       .max()
       .orElse(0);
   }
   public static TokenType fromString(String text){
-    return java.util.Arrays.stream(values())
+    return Arrays.stream(values())
       .filter(t -> t.text!=null && t.text.equals(text))
       .findFirst()
       .orElse(null);
