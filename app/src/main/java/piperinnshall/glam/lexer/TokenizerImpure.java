@@ -24,6 +24,7 @@ public interface TokenizerImpure {
     }
     return tokens;
   }
+
   private static LinkedList<Token> tokenizeLine(String line, int lineNum, LinkedList<Token> tokens){
     int colNum = 0;
     while (colNum < line.length()) {
@@ -33,6 +34,7 @@ public interface TokenizerImpure {
     }
     return tokens;
   }
+
   private static Token findAnyToken(String line,int colNum,int lineNum){
     Optional<Token> t;
     t= findPresetToken(line,colNum,lineNum);
@@ -42,6 +44,7 @@ public interface TokenizerImpure {
     String invalidChar = line.substring(colNum, colNum + 1);
     return Token.of(TokenType.INVALID,invalidChar,lineNum,colNum);
   }
+
   private static Optional<Token> findPresetToken(String line,int colNum,int lineNum){
     for (int len= TokenType.longestTokenLength();len>0;len--) {
       if (colNum+len>line.length())continue;
@@ -53,6 +56,7 @@ public interface TokenizerImpure {
     }
     return Optional.empty();
   }
+
   private static Optional<Token> findAbstractToken(String line, int colNum, int lineNUm){
     return Optional.empty();
   }

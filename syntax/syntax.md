@@ -1,4 +1,4 @@
-# Glam Language Specification
+# Gλ Language Specification
 
 This specification provides a detailed guide to the syntax and semantics of the Glam programming language.
 
@@ -38,12 +38,9 @@ x int = 5
 ## Comments
 
 * Single-line comments use `--`
-* Block comments use `-[` and `]-`
 
 ```glam
 -- This is a comment
-
--[ This is a block comment ]-
 ```
 
 ---
@@ -53,7 +50,7 @@ x int = 5
 Variables are declared with the format:
 
 ```glam
-variableName type = value
+variableName = value
 ```
 
 ---
@@ -61,13 +58,12 @@ variableName type = value
 ## Types
 
 ```glam
-myInt int = 1
-myFloat float = 0.1
-myBool bool = true
-myChar char = 'A'
-myStr str = "Hello"
-myUnit unit = ()
-myFn fn = () -> out { "Hello World" }
+int
+float
+bool
+char
+str
+fn
 ```
 
 ---
@@ -85,8 +81,15 @@ myFn fn = () -> out { "Hello World" }
 
 ---
 
-
 ## Lambda Functions
+
+### Parameters
+
+Lambda functions must have type parameters.
+
+```glam
+(x int) -> x
+```
 
 ### Anonymous Lambda
 
@@ -101,7 +104,7 @@ A lambda function with no name, often used inline.
 A lambda assigned to a variable:
 
 ```glam
-mult fn:int = (m int) -> m * 2
+mult = (m int) -> m * 2
 print(mult(2))
 ```
 
@@ -110,7 +113,7 @@ print(mult(2))
 Use `$` as an implicit parameter placeholder:
 
 ```glam
-mult fn:int = (int) -> $ * 2
+mult = (int) -> $ * 2
 mult(1)
 ```
 
@@ -119,10 +122,10 @@ mult(1)
 Breaks down multi-argument functions into chained single-argument functions:
 
 ```glam
-mult fn:fn:int = (x int) -> (y int) -> x * y
-partial fn:int = mult(1)
-result1 int = partial(1)
-result2 int = mult(1)(2)
+mult = (x int) -> (y int) -> x * y
+partial = mult(1)
+result1 = partial(1)
+result2 = mult(1)(2)
 ```
 
 ### Invoking Lambdas
@@ -136,7 +139,7 @@ In Glam you can only use () to call:
 
 2. A named function, e.g.
 ```glam 
-sayHello fn = () -> out { "Hi!" }
+sayHello = () -> out { "Hi!" }
 sayHello()  
 ```
 
@@ -144,10 +147,12 @@ sayHello()
 
 ## Pattern Matching
 
+Braces after an expression means pattern matching
+
 ### Anonymous Pattern Match
 
 ```glam
-() -> when day {
+() -> day {
   1 -> out { "Monday" }
   2 -> out { "Tuesday" }
   3 -> out { "Wednesday" }
@@ -163,7 +168,7 @@ sayHello()
 
 ```glam
 day int = 4
-matched str = when day {
+matched = day {
   1 -> "Monday"
   2 -> "Tuesday"
   3 -> "Wednesday"
@@ -180,7 +185,7 @@ print(matched)
 ### Lambda Pattern Match
 
 ```glam
-describe fn:str = (x int) -> when x {
+describe = (x int) -> x {
   1 -> "One"
   2 -> "Two"
   _ -> "Other"
@@ -188,15 +193,7 @@ describe fn:str = (x int) -> when x {
 
 -- Using placeholders:
 
-describe fn:str = (int) -> when $ {
-  1 -> "One"
-  2 -> "Two"
-  _ -> "Other"
-}
-
--- Non-Curried functions can omit the placeholder value when matching
-
-match fn:str = (int) -> when {
+describe = (int) -> $ {
   1 -> "One"
   2 -> "Two"
   _ -> "Other"
@@ -206,7 +203,7 @@ match fn:str = (int) -> when {
 ### Curried Pattern Match
 
 ```glam
-describe fn:fn:str = (x int) -> (y int) -> when x, y {
+describe = (x int) -> (y int) -> x, y {
   1, 1 -> "One and One"
   1, _ -> "One and something else"
   _, 2 -> "Something and Two"
@@ -215,12 +212,12 @@ describe fn:fn:str = (x int) -> (y int) -> when x, y {
 
 -- Or nested:
 
-describe fn:fn:str = (x int) -> when x {
-  1 -> (int) -> when $ {
+describe = (x int) -> x {
+  1 -> (int) -> $ {
     1 -> "One and One"
     _ -> "One and something else"
   }
-  _ -> (int) -> when $ {
+  _ -> (int) -> $ {
     2 -> "Something and Two"
     _ -> "Other"
   }
@@ -232,7 +229,7 @@ describe fn:fn:str = (x int) -> when x {
 ## Recursion
 
 ```glam
-factorial fn:int = (int) -> when $ {
+factorial = (int) -> $ {
   0 -> 1
   _ -> $ * self($ - 1)
 }
@@ -269,8 +266,8 @@ matrix [[int]] = [[1, 2], [3, 4]]
 Use parentheses for index access:
 
 ```glam
-nums(0) -- gets the first element (1)
-nums(1) -- gets the second element (2)
+nums[0] -- gets the first element 1
+nums[1] -- gets the second element 2
 ```
 
 ### Common List Functions
@@ -284,10 +281,10 @@ last(nums)          -- last element
 
 ### List Destructuring
 
-You can pattern match on lists using `when`:
+You can pattern match on lists:
 
 ```glam
-describe fn:str = ([int]) -> when {
+describe = ([int]) -> $ {
   [] -> "Empty list"
   [x] -> "Single item: {x}"
   [x, y] -> "Two items"
@@ -297,13 +294,15 @@ describe fn:str = ([int]) -> when {
 
 ---
 
+`TODO:`
+
 ## Tuples
 
 Return and destructure multiple values:
 
 ```glam
-num fn:int*str*bool = (int) -> $, "$ to string", true
-nums fn:fn:int*int = (x int) -> (y int) -> x, y
+num = (int) -> $, "$ to string", true
+nums = (x int) -> (y int) -> x, y
 ```
 
 ### Tuple Destructuring
@@ -317,19 +316,23 @@ tup int*int*int = x, y, z
 ### Pass Tuple to a Function
 
 ```glam
-pass fn:int = (int*int*int) -> {
+pass = (int*int*int) -> {
     a, b, c = $
     a + b + c
 }
 
 -- or explicitly:
 
-pass fn:int = (a, b, c int*int*int) -> {
+pass = (a, b, c int*int*int) -> {
     a + b + c
 }
 ```
 
+*End of Specification*
+
 -----
+
+`TODO:`
 
 ## Error Types
 
@@ -346,7 +349,7 @@ ok*int | err*str
 Glam allows multiple ways to define functions with error handling via pattern matching:
 
 ```glam
-safeDiv fn:!int = (int*int) -> when {
+safeDiv = (int*int) -> $ {
     _, 0 -> err, "divide by zero"
     _ -> ok, {
       x, y int*int = $ 
@@ -358,8 +361,8 @@ safeDiv fn:!int = (int*int) -> when {
 Desugarings and equivalent versions:
 
 ```glam
-safeDiv fn:ok*int|err*str = (int*int) -> when tup { ... }
-safeDiv fn:ok*int|err*str = (x, y int*int) -> when x, y { ... }
+safeDiv = (int*int) -> tup { ... }
+safeDiv = (x, y int*int) -> x, y { ... }
 ```
 
 ---
@@ -370,13 +373,13 @@ safeDiv fn:ok*int|err*str = (x, y int*int) -> when x, y { ... }
 nums [int] = 2, 7, 11, 15
 target int = 9
 
-find = (i, j int*int) -> when i, j {
+find = (i, j int*int) -> i, j {
   ? j >= length(nums) -> -1, -1
   ? nums(i) + nums(j) == target -> i, j
   _ -> self(i), j + 1
 }
 
-twoSum = () -> when {
+twoSum = () -> {
   length(nums) < 2 -> -1, -1
   _ -> find(0, 1)
 }
@@ -395,12 +398,11 @@ main = twoSum()
 
 ---
 
-*End of Specification*
-
 
 `TODO:`
 - Finish tuple destructuring
-- Add multi line string \\
+    - Should tuples exist
+- Add multi line string 
 - Add generics
 - Add higher order filter(pred)(t)
 

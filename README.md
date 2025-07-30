@@ -1,3 +1,3 @@
-# glam
+# Gλ
 
-Lambda based scripting language
+Glam is a Lambda based scripting language.

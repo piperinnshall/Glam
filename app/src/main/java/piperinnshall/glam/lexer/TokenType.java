@@ -6,9 +6,14 @@ public enum TokenType {
   IDENTIFIER(null),
   INVALID(null),
   // Literals
-  NUMBER(null),
-  STRING(null),
-  CHAR(null),
+  LIT_NUM(null),
+  LIT_STR(null),
+  LIT_CHAR(null),
+  //Types
+  INT("int"),
+  FLOAT("float"),
+  STR("str"),
+  CHAR("char"),
   // Keywords
   TRUE("true"),
   FALSE("false"),
