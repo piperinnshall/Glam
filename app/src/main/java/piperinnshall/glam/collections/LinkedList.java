@@ -2,6 +2,7 @@ package piperinnshall.glam.collections;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import piperinnshall.glam.tuple.Tuple0;
@@ -18,14 +19,20 @@ public interface LinkedList<T> {
   default LinkedList<T> getTail(LinkedList<T> orElse){
     return match(()->orElse,(_,tail)->tail);
   }
-  default LinkedList<T> reverse() {
+  default LinkedList<T> reverse(){
     return reverseHelper(this,(LinkedListEmpty<T>)s->s);
   }
-  private static <T> LinkedList<T> reverseHelper(LinkedList<T> list, LinkedList<T> acc) {
+  private static <T> LinkedList<T> reverseHelper(LinkedList<T> list, LinkedList<T> acc){
     return list.match(()->acc,(head, tail)->reverseHelper(tail, acc.add(head)));
   }
   default Tuple0 forEach(Consumer<T> c){
     return match(()->(Tuple0)this,(head,tail)->{c.accept(head);return tail.forEach(c);});
+  }
+  default LinkedList<T> filter(Predicate<T> p){
+    return filterHelper(p,this,(LinkedListEmpty<T>)s->s); 
+  }
+  private static <T> LinkedList<T> filterHelper(Predicate<T> p, LinkedList<T> list, LinkedList<T> acc){
+    return list.match(()->acc,(head, tail)->filterHelper(p, tail, p.test(head)?acc.add(head):acc));
   }
 }
 

@@ -25,7 +25,7 @@ public interface TokenizerImpure {
     while (colNum < line.length()) {
       Token token = findAnyToken(line, colNum, lineNum);
       tokens = tokens.add(token);
-      colNum += token.value().length();
+      colNum += token.lexeme().length();
     }
     return tokens;
   }

@@ -2,6 +2,7 @@ package piperinnshall.glam;
 
 import piperinnshall.glam.lexer.Tokenizer;
 import piperinnshall.glam.resources.Resource;
+import piperinnshall.glam.lexer.TokenType;
 
 public class App {
   public static void main(String[] args) {
@@ -13,7 +14,8 @@ public class App {
     System.out.println();
     t.tokenize()
       .reverse()
-      .forEach(x->System.out.print(x.value()));
+      .filter(x -> !x.tokenType().equals(TokenType.WHITESPACE))
+      .forEach(x->System.out.print(x.lexeme()));
   }
 }
 

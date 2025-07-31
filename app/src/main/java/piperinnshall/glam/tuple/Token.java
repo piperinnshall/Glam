@@ -11,7 +11,7 @@ public interface Token{
     final TokenSelector sel=(t,_,_,_)->(FromTokenType)()->t;
     return this.apply(sel).toTokenType();
   }
-  default String value() {
+  default String lexeme() {
     final TokenSelector sel=(_,v,_,_)->(FromValue)()->v;
     return this.apply(sel).toValue();
   }
