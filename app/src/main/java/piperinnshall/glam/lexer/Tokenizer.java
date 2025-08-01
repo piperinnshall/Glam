@@ -12,10 +12,11 @@ import piperinnshall.glam.tuple.Token;
 public interface Tokenizer {
   abstract Path path();
   default LinkedList<Token> tokenize() {
-    try(BufferedReader reader= Files.newBufferedReader(this.path())){
-      return TokenizerImpure.tokenize(reader);
-    }catch(IOException e){e.printStackTrace();}
-    return (LinkedListEmpty<Token>)x->x;
+    try (BufferedReader reader = Files.newBufferedReader(this.path())) {
+      return ((TokenizeFile) () -> reader).tokenize();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return (LinkedListEmpty<Token>) x -> x;
   }
 }
-

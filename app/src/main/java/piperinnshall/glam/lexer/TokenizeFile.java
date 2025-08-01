@@ -8,13 +8,14 @@ import piperinnshall.glam.collections.LinkedList;
 import piperinnshall.glam.collections.LinkedListEmpty;
 import piperinnshall.glam.tuple.Token;
 
-public interface TokenizerImpure {
-  default LinkedList<Token> tokenize(BufferedReader r) throws IOException {
+public interface TokenizeFile {
+  abstract BufferedReader r();
+  default LinkedList<Token> tokenize() throws IOException {
     int[] i = { 1 };
-    return r.lines()
+    return r().lines()
         .map(line -> {
           int y = i[0]++;
-          return TokenizerImpure.line(line, y);
+          return line(line, y);
         }).reduce((LinkedListEmpty<Token>) l -> l, LinkedList::concat);
   }
   private static LinkedList<Token> line(String line, int y) {
