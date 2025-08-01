@@ -1,4 +1,4 @@
-isPrime = (int) -> $ {
+isPrime = (int) -> ${
     ? $ < 2 -> false
     _ -> (d int) -> d {
         ? d * d > $ -> true

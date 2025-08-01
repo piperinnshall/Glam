@@ -28,8 +28,7 @@ x int = 5
 () -> out "Hello World! {x}"()
 
 () -> out {
-    \\My number: 
-    \\{x} 
+    "My number: {x}"
 }()
 ```
 
@@ -95,7 +94,7 @@ Lambda functions must have type parameters.
 A lambda function with no name, often used inline.
 
 ```glam
-() -> print("Hello World!")
+() -> out{"Hello World!"}
 ```
 
 ### Named Lambda
@@ -104,7 +103,6 @@ A lambda assigned to a variable:
 
 ```glam
 mult = (m int) -> m * 2
-print(mult(2))
 ```
 
 ### Placeholder Lambda
@@ -152,14 +150,14 @@ Braces after an expression means pattern matching
 
 ```glam
 () -> day {
-  1 -> out { "Monday" }
-  2 -> out { "Tuesday" }
-  3 -> out { "Wednesday" }
-  4 -> out { "Thursday" }
-  5 -> out { "Friday" }
-  6 -> out { "Saturday" }
-  7 -> out { "Sunday" }
-  _ -> out { "Unknown" }
+  1 -> out "Monday" 
+  2 -> out "Tuesday" 
+  3 -> out "Wednesday" 
+  4 -> out "Thursday" 
+  5 -> out "Friday" 
+  6 -> out "Saturday" 
+  7 -> out "Sunday" 
+  _ -> out "Unknown" 
 }()
 ```
 
@@ -177,8 +175,6 @@ matched = day {
   7 -> "Sunday"
   _ -> "Unknown"
 }
-
-print(matched)
 ```
 
 ### Lambda Pattern Match
@@ -206,7 +202,7 @@ describe = (x int) -> (y int) -> x, y {
   1, 1 -> "One and One"
   1, _ -> "One and something else"
   _, 2 -> "Something and Two"
-  _, _ -> "Other"
+  _ -> "Other"
 }
 
 -- Or nested:
@@ -294,8 +290,6 @@ describe = ([int]) -> $ {
 ---
 
 # *End of Specification*
-
----
 
 `TODO:`
 
