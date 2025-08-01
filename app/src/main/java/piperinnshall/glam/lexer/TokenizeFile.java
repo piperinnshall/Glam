@@ -88,29 +88,22 @@ public interface TokenizeFile {
     return "";
   }
 
-  private static Optional<Token> findLitStr(String line, int x, int y) {
-    if (line.charAt(x) != '"')
+  private static Optional<Token> findLitStr(String s, int start, int y) {
+    if (s.charAt(start) != '"') 
       return Optional.empty();
-    return findLitStr(line, x + 1, y, x, 0, false, false, "\"");
-  }
-
-  private static Optional<Token> findLitStr(String line, int pos, int y, int start, int brace, boolean escaped,
-      boolean invalid, String acc) {
-    if (pos >= line.length())
-      return Optional.of(Token.of(TokenType.LIT_STR_INVALID, acc, y, start));
-    char c = line.charAt(pos);
-    if (escaped)
-      return findLitStr(line, pos + 1, y, start, brace, false, invalid, acc + c);
-    if (c == '\\')
-      return findLitStr(line, pos + 1, y, start, brace, true, invalid, acc + c);
-    if (c == '{')
-      return findLitStr(line, pos + 1, y, start, brace + 1, false, invalid, acc + c);
-    if (c == '}')
-      return findLitStr(line, pos + 1, y, start, brace - 1, false, invalid || brace == 0, acc + c);
-    if (c == '"') {
-      TokenType type = (brace == 0 && !invalid) ? TokenType.LIT_STR : TokenType.LIT_STR_INVALID;
-      return Optional.of(Token.of(type, acc + c, y, start));
+    int x = start + 1, br = 0;
+    boolean esc = false, invalid = false;
+    while (x < s.length()) {
+      char c = s.charAt(x++);
+      if (esc) { esc = false; continue; }
+      if (c == '\\') esc = true;
+      else if (c == '{') br++;
+      else if (c == '}') invalid |= (br-- <= 0);
+      else if (c == '"') break;
     }
-    return findLitStr(line, pos + 1, y, start, brace, false, invalid, acc + c);
+    String lex = s.substring(start, x);
+    TokenType t = (!invalid && br == 0) 
+      ? TokenType.LIT_STR : TokenType.LIT_STR_INVALID;
+    return Optional.of(Token.of(t, lex, y, start));
   }
 }
