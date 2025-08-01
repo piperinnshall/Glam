@@ -9,147 +9,81 @@ import piperinnshall.glam.collections.LinkedListEmpty;
 import piperinnshall.glam.tuple.Token;
 
 public interface TokenizerImpure {
-  static LinkedList<Token> tokenize(BufferedReader r) throws IOException {
-    LinkedList<Token> tokens = (LinkedListEmpty<Token>) x -> x;
-    String line;
-    int lineNum = 0;
-    while ((line = r.readLine()) != null) {
-      tokens = tokenizeLine(line, lineNum, tokens)
-          .add(Token.of(TokenType.NEWLINE, "\n", lineNum, line.length()));
-      lineNum++;
-    }
-    return tokens;
+  default LinkedList<Token> tokenize(BufferedReader r) throws IOException {
+    int[] i = { 1 };
+    return r.lines()
+        .map(line -> {
+          int y = i[0]++;
+          return TokenizerImpure.line(line, y);
+        }).reduce((LinkedListEmpty<Token>) l -> l, LinkedList::concat);
   }
-
-  private static LinkedList<Token> tokenizeLine(String line, int lineNum, LinkedList<Token> tokens) {
-    int colNum = 0;
-    while (colNum < line.length()) {
-      Token token = findAnyToken(line, colNum, lineNum);
-      tokens = tokens.add(token);
-      colNum += token.lexeme().length();
-    }
-    return tokens;
+  private static LinkedList<Token> line(String line, int y) {
+    return lineHelper(line, 0, y, (LinkedListEmpty<Token>) l -> l)
+        .add(Token.of(TokenType.NEWLINE, "\n", 0, line.length()))
+        .reverse();
   }
-
-  private static Token findAnyToken(String line, int colNum, int lineNum) {
-    return findPresetToken(line, colNum, lineNum)
-        .or(() -> findIdentifier(line, colNum, lineNum))
-        .or(() -> findLitNum(line, colNum, lineNum))
-        .or(() -> findLitStr(line, colNum, lineNum))
-        .orElseGet(() -> {
-          String invalidChar = line.substring(colNum, colNum + 1);
-          return Token.of(TokenType.INVALID, invalidChar, lineNum, colNum);
-        });
+  private static LinkedList<Token> lineHelper(String line, int x, int y, LinkedList<Token> acc) {
+    if (x >= line.length()) return acc; 
+    Token token = findAnyToken(line, x, y);
+    return lineHelper(line, x + token.lexeme().length(), y, acc.add(token));
   }
-
-  private static Optional<Token> findPresetToken(String line, int colNum, int lineNum) {
-    for (int len = TokenType.longestTokenLength(); len > 0; len--) {
-      if (colNum + len > line.length())
-        continue;
-      String sub = line.substring(colNum, colNum + len);
-      TokenType type = TokenType.fromString(sub);
-      if (type != null)
-        return Optional.of(Token.of(type, sub, lineNum, colNum));
-    }
-    return Optional.empty();
+  private static Token findAnyToken(String line, int x, int y) {
+    return findPresetToken(line, x, y)
+        .or(() -> findIdentf(line, x, y))
+        .or(() -> findLitNum(line, x, y))
+        .or(() -> findLitStr(line, x, y))
+        .orElseGet(() -> Token.of(TokenType.INVALID, line.substring(x, x + 1), y, x));
   }
-
-  private static Optional<Token> findIdentifier(String line, int colNum, int lineNum) {
-    if (!Character.isLetter(line.charAt(colNum)))
-      return Optional.empty();
-    int startCol = colNum;
-    String s = "";
-    while (colNum < line.length()) {
-      char c = line.charAt(colNum);
-      if (Character.isLetterOrDigit(c)) {
-        s += c;
-        colNum++;
-      } else
-        break;
-    }
-    if (!s.isEmpty())
-      return Optional.of(Token.of(TokenType.IDENTIFIER, s, lineNum, startCol));
-    return Optional.empty();
+  private static Optional<Token> findPresetToken(String line, int x, int y) {
+    return findPresetToken(line, x, y, TokenType.longestTokenLength());
   }
-
-  private static Optional<Token> findLitNum(String line, int colNum, int lineNum) {
-    if (!Character.isDigit(line.charAt(colNum)))
-      return Optional.empty();
-    boolean seenDot = false;
-    int startCol = colNum;
-    String s = "";
-    while (colNum < line.length()) {
-      char c = line.charAt(colNum);
-      if (Character.isDigit(c)) {
-        s += c;
-        colNum++;
-        continue;
-      }
-      if (c == '.' && !seenDot) {
-        seenDot = true;
-        s += c;
-        colNum++;
-        continue;
-      }
-      break;
-    }
-    if (!s.isEmpty())
-      return Optional.of(Token.of(TokenType.LIT_NUM, s, lineNum, startCol));
-    return Optional.empty();
+  private static Optional<Token> findPresetToken(String line, int x, int y, int len) {
+    if (len == 0) return Optional.empty();
+    if (x + len > line.length()) return findPresetToken(line, x, y, len - 1);
+    String sub = line.substring(x, x + len);
+    TokenType type = TokenType.fromString(sub);
+    if (type != null) return Optional.of(Token.of(type, sub, y, x));
+    return findPresetToken(line, x, y, len - 1);
   }
-
-  private static Optional<Token> findLitStr(String line, int colNum, int lineNum) {
-    int startCol = colNum;
-    String s = "";
-    if (line.charAt(colNum) != '"')
-      return Optional.empty();
-    s += '"';
-    colNum++;
-    int braceCount = 0;
-    boolean escaped = false;
-    boolean invalid = false;
-    while (colNum < line.length()) {
-      char c = line.charAt(colNum);
-      if (escaped) {
-        s += c;
-        escaped = false;
-        colNum++;
-        continue;
-      }
-      if (c == '\\') {
-        s += c;
-        escaped = true;
-        colNum++;
-        continue;
-      }
-      if (c == '{') {
-        s += c;
-        braceCount++;
-        colNum++;
-        continue;
-      }
-      if (c == '}') {
-        s += c;
-        if (braceCount == 0)
-          invalid = true;
-        else
-          braceCount--;
-        colNum++;
-        continue;
-      }
-      if (c == '"') {
-        s += c;
-        colNum++;
-        if (braceCount == 0 && !invalid)
-          return Optional.of(Token.of(TokenType.LIT_STR, s, lineNum, startCol));
-        else
-          return Optional.of(Token.of(TokenType.LIT_STR_INVALID, s, lineNum, startCol));
-      }
-      s += c;
-      colNum++;
+  private static Optional<Token> findIdentf(String line, int x, int y) {
+    if (!Character.isLetter(line.charAt(x))) return Optional.empty();
+    String lexeme = findIdentf(line, x);
+    return Optional.of(Token.of(TokenType.IDENTIFIER, lexeme, y, x));
+  }
+  private static String findIdentf(String line, int pos) {
+    if (pos < line.length() && Character.isLetterOrDigit(line.charAt(pos)))
+      return line.charAt(pos) + findIdentf(line, pos + 1);
+    return "";
+  }
+  private static Optional<Token> findLitNum(String line, int x, int y) {
+    if (!Character.isDigit(line.charAt(x))) return Optional.empty();
+    String lexeme = findLitNum(line, x, false);
+    return Optional.of(Token.of(TokenType.LIT_NUM, lexeme, y, x));
+  }
+  private static String findLitNum(String line, int pos, boolean dot) {
+    if (pos < line.length()) {
+      char c = line.charAt(pos);
+      if (Character.isDigit(c)) return c + findLitNum(line, pos + 1, dot);
+      if (c == '.' && !dot) return c + findLitNum(line, pos + 1, true);
     }
-    if (!s.isEmpty())
-      return Optional.of(Token.of(TokenType.LIT_STR_INVALID, s, lineNum, startCol));
-    return Optional.empty();
+    return "";
+  }
+  private static Optional<Token> findLitStr(String line, int x, int y) {
+    if (line.charAt(x) != '"') return Optional.empty();
+    return findLitStr(line, x + 1, y, x, 0, false, false, "\"");
+  }
+  private static Optional<Token> findLitStr(String line, int pos, int y, int start, int brace, boolean escaped,
+      boolean invalid, String acc) {
+    if (pos >= line.length()) return Optional.of(Token.of(TokenType.LIT_STR_INVALID, acc, y, start));
+    char c = line.charAt(pos);
+    if (escaped) return findLitStr(line, pos + 1, y, start, brace, false, invalid, acc + c);
+    if (c == '\\') return findLitStr(line, pos + 1, y, start, brace, true, invalid, acc + c);
+    if (c == '{') return findLitStr(line, pos + 1, y, start, brace + 1, false, invalid, acc + c);
+    if (c == '}') return findLitStr(line, pos + 1, y, start, brace - 1, false, invalid || brace == 0, acc + c);
+    if (c == '"') {
+      TokenType type = (brace == 0 && !invalid) ? TokenType.LIT_STR : TokenType.LIT_STR_INVALID;
+      return Optional.of(Token.of(type, acc + c, y, start));
+    }
+    return findLitStr(line, pos + 1, y, start, brace, false, invalid, acc + c);
   }
 }
