@@ -144,7 +144,8 @@ sayHello()
 
 ## Pattern Matching
 
-Braces after an expression means pattern matching
+When braces follow a value (for example a lambda parameter), they perform
+pattern matching on that value.
 
 ### Anonymous Pattern Match
 
