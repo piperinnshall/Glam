@@ -20,20 +20,6 @@ main = (() -> 0)()
 
 ---
 
-## Output
-
-```glam
-x int = 5
-
-() -> out "Hello World! {x}"()
-
-() -> out {
-    "My number: {x}"
-}()
-```
-
----
-
 ## Comments
 
 * Single-line comments use `--`
@@ -138,6 +124,20 @@ In Glam you can only use () to call:
 ```glam 
 sayHello = () -> out { "Hi!" }
 sayHello()  
+```
+
+---
+
+## Output
+
+```glam
+x = 5
+
+() -> out "Hello World! {x}"()
+
+() -> out {
+    "My number: {x}"
+}()
 ```
 
 ---
