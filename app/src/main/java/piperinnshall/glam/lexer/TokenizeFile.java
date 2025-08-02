@@ -27,8 +27,7 @@ public interface TokenizeFile {
   }
 
   private static LinkedList<Token> lineHelper(String line, int x, int y, LinkedList<Token> acc) {
-    if (x >= line.length())
-      return acc;
+    if (x >= line.length()) return acc;
     Token token = findAnyToken(line, x, y);
     return lineHelper(line, x + token.lexeme().length(), y, acc.add(token));
   }
@@ -46,20 +45,16 @@ public interface TokenizeFile {
   }
 
   private static Optional<Token> findPresetToken(String line, int x, int y, int len) {
-    if (len == 0)
-      return Optional.empty();
-    if (x + len > line.length())
-      return findPresetToken(line, x, y, len - 1);
+    if (len == 0) return Optional.empty();
+    if (x + len > line.length()) return findPresetToken(line, x, y, len - 1);
     String sub = line.substring(x, x + len);
     TokenType type = TokenType.fromString(sub);
-    if (type != null)
-      return Optional.of(Token.of(type, sub, y, x));
+    if (type != null) return Optional.of(Token.of(type, sub, y, x));
     return findPresetToken(line, x, y, len - 1);
   }
 
   private static Optional<Token> findIdentf(String line, int x, int y) {
-    if (!Character.isLetter(line.charAt(x)))
-      return Optional.empty();
+    if (!Character.isLetter(line.charAt(x))) return Optional.empty();
     String lexeme = findIdentf(line, x);
     return Optional.of(Token.of(TokenType.IDENTIFIER, lexeme, y, x));
   }
@@ -71,8 +66,7 @@ public interface TokenizeFile {
   }
 
   private static Optional<Token> findLitNum(String line, int x, int y) {
-    if (!Character.isDigit(line.charAt(x)))
-      return Optional.empty();
+    if (!Character.isDigit(line.charAt(x))) return Optional.empty();
     String lexeme = findLitNum(line, x, false);
     return Optional.of(Token.of(TokenType.LIT_NUM, lexeme, y, x));
   }
@@ -80,17 +74,14 @@ public interface TokenizeFile {
   private static String findLitNum(String line, int pos, boolean dot) {
     if (pos < line.length()) {
       char c = line.charAt(pos);
-      if (Character.isDigit(c))
-        return c + findLitNum(line, pos + 1, dot);
-      if (c == '.' && !dot)
-        return c + findLitNum(line, pos + 1, true);
+      if (Character.isDigit(c)) return c + findLitNum(line, pos + 1, dot);
+      if (c == '.' && !dot) return c + findLitNum(line, pos + 1, true);
     }
     return "";
   }
 
   private static Optional<Token> findLitStr(String s, int start, int y) {
-    if (s.charAt(start) != '"') 
-      return Optional.empty();
+    if (s.charAt(start) != '"') return Optional.empty();
     int x = start + 1, br = 0;
     boolean esc = false, invalid = false;
     while (x < s.length()) {
