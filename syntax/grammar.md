@@ -2,12 +2,12 @@
 
 ```
 E       ::= x | lit 
-        | (x T) -> Ss E     
-        | () -> Ss E           
+        | (x T)->Ss E     
+        | ()->Ss E           
         | C(E2) | C()        
         | !E | E1 op E2        
-        | E{Cases _ -> E'}    
-C       ::= (x T) -> Ss E | () -> Ss E      --Callable
+        | E{Cases _->E'}    
+C       ::= (x T)->Ss E | ()->Ss E      --Callable
 S       ::= x = E
 T       ::= int | float | bool | str 
         | [T] | fn:T                        -- fn returns T
@@ -17,16 +17,16 @@ op      ::= + | - | * | / | %
         | == | != 
         | < | <= | > | >= 
         | and | or
-Case    ::= E1 -> E2 | ?E1 -> E2
+Case    ::= E1->E2 | ?E1->E2
 v       ::= lit | C
 Ctx     ::= Ctx(E2) 
-        | ((x T) -> Ss E)(Ctx) 
+        | ((x T)->Ss E)(Ctx) 
         | Ctx() 
-        | Ctx{ Cases _ -> E'} 
+        | Ctx{ Cases _->E'} 
         | Ctx op E2 
         | v op Ctx
-        | v{ Ctx -> E2 Cases _ -> E'}
-        | v{ ?Ctx -> E2 Cases _ -> E'}
+        | v{ Ctx->E2 Cases _->E'}
+        | v{ ?Ctx->E2 Cases _->E'}
         | (() x = Ctx Ss E)()
 ```
 
@@ -39,32 +39,32 @@ E ==> E'
 Ctx[E] ==> Ctx[E']
 
 (done)
-(() -> E)() ==> E
-
-(nullary-apply)
-(() -> Ss E)() ==> (() -> Ss[self = (() -> Ss E)()] Ss E[self = (() -> Ss E)()])()
+(()->E)() ==> E[self = (()->E)()]
 
 (stm-apply)
-((x T) -> Ss E)(v) ==> (() -> Ss[x=v, self = ((x T) -> Ss E)] Ss E[x=v, self = ((x T) -> Ss E)])()
+((x T)->Ss E)(v) ==> (()->Ss[x=v, self=((x T)->Ss E)] Ss E[x=v, self=((x T)->Ss E)])()
+
+(nullary-apply)
+(()->x=E Ss E')() ==> (()->Ss[x=E, self=(()-> x=E Ss E'] E'[x=E self=(()->x=E Ss E')])()
 
 (expr-apply)
-((x T) -> E)(v) ==> (() -> Ss[x=v, self = E[x=v]] E[x=v])()
+((x T)->E)(v) ==> (()->E[x=v, self = ((x T)->E)])()
 
 (match)
-v{v -> E Cases _->E'} ==> E
+v{v->E Cases _->E'} ==> E
 
 v != v'
 ---(match-fail)
-v{v' -> E Cases _ -> E'} ==> v{Cases _ -> E'}
+v{v'->E Cases _->E'} ==> v{Cases _->E'}
 
 (true)
-v{?true -> E Cases _ -> E'} ==> E
+v{?true->E Cases _->E'} ==> E
 
 (false)
-v{?false -> E Cases _ -> E'} ==> v{Cases _ -> E'}
+v{?false->E Cases _->E'} ==> v{Cases _->E'}
 
 (default)
-v{ _ -> E'} ==> E'
+v{ _->E'} ==> E'
 
 (primitive)
 v1 op v2 ==> op[v1,v2]
