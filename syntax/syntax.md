@@ -47,7 +47,7 @@ int
 float
 bool
 str
-fn
+fn:T
 ```
 
 ---
@@ -60,7 +60,7 @@ fn
 !   !=       -- Negation and inequality
 <   <=       -- Less than and less than or equal
 >   >=       -- Greater than and greater than or equal
-&   |        -- Logical AND and OR
+and or       -- Logical AND and OR
 ```
 
 ---
@@ -116,11 +116,13 @@ result2 = mult(1)(2)
 In Glam you can only use () to call:
 
 1. An anonymous arrow lambda, e.g.
+
 ```glam 
 () -> out { "Hello" }()
 ```
 
 2. A named function, e.g.
+
 ```glam 
 sayHello = () -> out { "Hi!" }
 sayHello()  
