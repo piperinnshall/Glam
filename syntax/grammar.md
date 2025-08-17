@@ -2,25 +2,23 @@
 
 ```
 E       ::= x | lit 
-        | (x T)->Ss E     
-        | ()->Ss E           
-        | C(E2) | C()        
-        | !E | E1 op E2        
+        | E(E') | E()        
+        | !E | E op E'
+        | (x T | T)->Ss E | ()->Ss E
         | E{Cases _->E'}    
-C       ::= (x T)->Ss E | ()->Ss E      --Callable
 S       ::= x = E
-T       ::= int | float | bool | str 
-        | [T] | fn:T                        -- fn returns T
+T       ::= int | float | bool | str | [T] 
+        | fn:T                          -- fn returns T
 lit     ::= ... | true | false
-x       ::= ... | self
+x       ::= ... | self | $
 op      ::= + | - | * | / | % 
         | == | != 
         | < | <= | > | >= 
         | and | or
 Case    ::= E1->E2 | ?E1->E2
-v       ::= lit | C
+v       ::= lit
 Ctx     ::= Ctx(E2) 
-        | ((x T)->Ss E)(Ctx) 
+        | ((x T | T)->Ss E)(Ctx) 
         | Ctx() 
         | Ctx{ Cases _->E'} 
         | Ctx op E2 
@@ -41,14 +39,14 @@ Ctx[E] ==> Ctx[E']
 (done)
 (()->E)() ==> E[self = (()->E)()]
 
-(stm-apply)
-((x T)->Ss E)(v) ==> (()->Ss[x=v, self=((x T)->Ss E)] Ss E[x=v, self=((x T)->Ss E)])()
+(expr-eat-arg)
+((x T | T)->E)(v) ==> (()->E[x:=v, $:=v, self:=((x T | T)->E)])()
 
-(nullary-apply)
-(()->x=E Ss E')() ==> (()->Ss[x=E, self=(()-> x=E Ss E'] E'[x=E self=(()->x=E Ss E')])()
+(stm-eat-arg)
+((x T | T)->Ss E)(v) ==> (()->Ss[x:=v, $:=v, self:=((x T | T)->Ss E)] E[x:=v?, $:=v, self:=((x T | T)->Ss E)])()
 
-(expr-apply)
-((x T)->E)(v) ==> (()->E[x=v, self = ((x T)->E)])()
+(stm-replace)
+(()->x:=E Ss E')() ==> (()->Ss[x:=E, self:=(()-> x:=E Ss E'] E'[x:=E self:=(()->x:=E Ss E')])()
 
 (match)
 v{v->E Cases _->E'} ==> E
@@ -57,14 +55,12 @@ v != v'
 ---(match-fail)
 v{v'->E Cases _->E'} ==> v{Cases _->E'}
 
-(true)
+(match-guard)
 v{?true->E Cases _->E'} ==> E
-
-(false)
 v{?false->E Cases _->E'} ==> v{Cases _->E'}
 
 (default)
-v{ _->E'} ==> E'
+v{_->E'} ==> E'
 
 (primitive)
 v1 op v2 ==> op[v1,v2]
@@ -76,7 +72,7 @@ v1 op v2 ==> op[v1,v2]
 ```
 
 ```
-Define E[x=v]
-Define Ss[x=v]
-Define S[x=v]
+Define E[x:=v]
+Define Ss[x:=v]
+Define S[x:=v]
 ```
