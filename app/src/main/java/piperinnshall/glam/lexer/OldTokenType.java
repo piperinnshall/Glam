@@ -2,7 +2,7 @@ package piperinnshall.glam.lexer;
 
 import java.util.Arrays;
 
-public enum TokenType {
+public enum OldTokenType {
   IDENTIFIER(null),
   INVALID(null),
   // Literals
@@ -55,7 +55,7 @@ public enum TokenType {
   WHITESPACE(" "),
   NEWLINE(null);
   private final String text;
-  TokenType(String text){this.text= text;}
+  OldTokenType(String text){this.text= text;}
   public static int longestTokenLength() {
     return Arrays.stream(values())
       .filter(t -> t.text != null)
@@ -63,7 +63,7 @@ public enum TokenType {
       .max()
       .orElse(0);
   }
-  public static TokenType fromString(String text){
+  public static OldTokenType fromString(String text){
     return Arrays.stream(values())
       .filter(t -> t.text!=null && t.text.equals(text))
       .findFirst()

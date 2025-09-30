@@ -1,5 +1,8 @@
 package piperinnshall.glam.tokenizer;
 
+import piperinnshall.glam.collections.LinkedList;
+import piperinnshall.glam.collections.LinkedListEmpty;
+
 public interface TokenType {
   abstract String text();
 
@@ -54,4 +57,66 @@ public interface TokenType {
   TokenType COMMENT = () -> "--";
   TokenType WHITESPACE = () -> " ";
   TokenType NEWLINE = () -> null;
+
+  static LinkedList<TokenType> all = ((LinkedListEmpty<TokenType>) s -> s)
+      .add(IDENTIFIER)
+      .add(INVALID)
+      .add(LIT_NUM)
+      .add(LIT_STR)
+      .add(LIT_STR_INVALID)
+      .add(INT)
+      .add(FLOAT)
+      .add(STR)
+      .add(TRUE)
+      .add(FALSE)
+      .add(OUT)
+      .add(MAIN)
+      .add(SELF)
+      .add(TYPE)
+      .add(PLACEHOLDER)
+      .add(PLUS)
+      .add(MINUS)
+      .add(STAR)
+      .add(SLASH)
+      .add(MODULO)
+      .add(ASSIGN)
+      .add(EQEQ)
+      .add(BANG)
+      .add(BANGEQ)
+      .add(LT)
+      .add(LTE)
+      .add(GT)
+      .add(GTE)
+      .add(AND)
+      .add(OR)
+      .add(LPAREN)
+      .add(RPAREN)
+      .add(LBRACE)
+      .add(RBRACE)
+      .add(LBRACKET)
+      .add(RBRACKET)
+      .add(COMMA)
+      .add(COLON)
+      .add(ARROW)
+      .add(USCORE)
+      .add(GUARD)
+      .add(COMMENT)
+      .add(WHITESPACE)
+      .add(NEWLINE);
+
+  /** 
+   * Finds largest matching token
+   */
+  static TokenType contains(String s) {
+    return containsHelper(s, all, null);
+  }
+
+  private static TokenType containsHelper(String s, LinkedList<TokenType> list, TokenType best) {
+    return list.match(() -> best,
+        (head, tail) -> containsHelper(s, tail,
+            (head.text() != null && s.startsWith(head.text())
+                && (best == null || head.text().length() > best.text().length()))
+                    ? head
+                    : best));
+  }
 }
