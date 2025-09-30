@@ -6,6 +6,8 @@ import piperinnshall.glam.resources.Resource;
 
 public class App {
   public static void main(String[] args) {
+
+
     Tokenizer t = () -> ((Resource) () -> "test.txt").get();
     t.tokenize()
         .forEach(x -> System.out.print(x.lexeme()));
