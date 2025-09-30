@@ -1,13 +1,13 @@
 package piperinnshall.glam.tuple;
 
-import piperinnshall.glam.lexer.TokenType;
+import piperinnshall.glam.lexer.OldTokenType;
 
 public interface Token {
-  public static Token of(TokenType tokenType, String value, int line, int column) {
+  public static Token of(OldTokenType tokenType, String value, int line, int column) {
     return sel -> sel.apply(tokenType, value, line, column);
   }
   TokenUnion apply(TokenSelector sel);
-  default TokenType tokenType() {
+  default OldTokenType tokenType() {
     final TokenSelector sel = (t, _, _, _) -> (FromTokenType) () -> t;
     return this.apply(sel).toTokenType();
   }
@@ -25,13 +25,13 @@ public interface Token {
   }
 }
 interface TokenUnion {
-  default TokenType toTokenType() { return this.toTokenType(); }
+  default OldTokenType toTokenType() { return this.toTokenType(); }
   default String toValue() { return this.toValue(); }
   default int toLine() { return this.toLine(); }
   default int toColumn() { return this.toColumn(); }
 }
-interface FromTokenType extends TokenUnion { TokenType toTokenType(); }
+interface FromTokenType extends TokenUnion { OldTokenType toTokenType(); }
 interface FromValue extends TokenUnion { String toValue(); }
 interface FromLine extends TokenUnion { int toLine(); }
 interface FromColumn extends TokenUnion { int toColumn(); }
-interface TokenSelector { TokenUnion apply(TokenType t, String v, int l, int c); }
+interface TokenSelector { TokenUnion apply(OldTokenType t, String v, int l, int c); }

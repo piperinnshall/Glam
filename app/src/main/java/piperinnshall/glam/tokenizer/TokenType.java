@@ -110,13 +110,7 @@ public interface TokenType {
    * Finds largest matching token
    */
   public static TokenType contains(String s) {
-    return containsHelper(s, all(), null);
-  }
-
-  private static TokenType containsHelper(String s, LinkedList<TokenType> list, TokenType best) {
-    return list.match(
-        () -> best,
-        (head, tail) -> containsHelper(s, tail, isBest(s, head, best) ? head : best));
+    return all().foldL(INVALID, (best, head) -> isBest(s, head, best) ? head : best);
   }
 
   private static boolean isBest(String s, TokenType head, TokenType best) {

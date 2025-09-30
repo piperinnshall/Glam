@@ -22,7 +22,7 @@ public interface TokenizeFile {
 
   private static LinkedList<Token> line(String line, int y) {
     return lineHelper(line, 0, y, (LinkedListEmpty<Token>) l -> l)
-        .add(Token.of(TokenType.NEWLINE, "\n", 0, line.length()))
+        .add(Token.of(OldTokenType.NEWLINE, "\n", 0, line.length()))
         .reverse();
   }
 
@@ -37,18 +37,18 @@ public interface TokenizeFile {
         .or(() -> findIdentf(line, x, y))
         .or(() -> findLitNum(line, x, y))
         .or(() -> findLitStr(line, x, y))
-        .orElseGet(() -> Token.of(TokenType.INVALID, line.substring(x, x + 1), y, x));
+        .orElseGet(() -> Token.of(OldTokenType.INVALID, line.substring(x, x + 1), y, x));
   }
 
   private static Optional<Token> findPresetToken(String line, int x, int y) {
-    return findPresetToken(line, x, y, TokenType.longestTokenLength());
+    return findPresetToken(line, x, y, OldTokenType.longestTokenLength());
   }
 
   private static Optional<Token> findPresetToken(String line, int x, int y, int len) {
     if (len == 0) return Optional.empty();
     if (x + len > line.length()) return findPresetToken(line, x, y, len - 1);
     String sub = line.substring(x, x + len);
-    TokenType type = TokenType.fromString(sub);
+    OldTokenType type = OldTokenType.fromString(sub);
     if (type != null) return Optional.of(Token.of(type, sub, y, x));
     return findPresetToken(line, x, y, len - 1);
   }
@@ -56,7 +56,7 @@ public interface TokenizeFile {
   private static Optional<Token> findIdentf(String line, int x, int y) {
     if (!Character.isLetter(line.charAt(x))) return Optional.empty();
     String lexeme = findIdentf(line, x);
-    return Optional.of(Token.of(TokenType.IDENTIFIER, lexeme, y, x));
+    return Optional.of(Token.of(OldTokenType.IDENTIFIER, lexeme, y, x));
   }
 
   private static String findIdentf(String line, int pos) {
@@ -68,7 +68,7 @@ public interface TokenizeFile {
   private static Optional<Token> findLitNum(String line, int x, int y) {
     if (!Character.isDigit(line.charAt(x))) return Optional.empty();
     String lexeme = findLitNum(line, x, false);
-    return Optional.of(Token.of(TokenType.LIT_NUM, lexeme, y, x));
+    return Optional.of(Token.of(OldTokenType.LIT_NUM, lexeme, y, x));
   }
 
   private static String findLitNum(String line, int pos, boolean dot) {
@@ -93,8 +93,8 @@ public interface TokenizeFile {
       else if (c == '"') break;
     }
     String lex = s.substring(start, x);
-    TokenType t = (!invalid && br == 0) 
-      ? TokenType.LIT_STR : TokenType.LIT_STR_INVALID;
+    OldTokenType t = (!invalid && br == 0) 
+      ? OldTokenType.LIT_STR : OldTokenType.LIT_STR_INVALID;
     return Optional.of(Token.of(t, lex, y, start));
   }
 }
