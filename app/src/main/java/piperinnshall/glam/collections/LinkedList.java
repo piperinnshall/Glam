@@ -19,6 +19,11 @@ public interface LinkedList<T> {
   default LinkedList<T> getTail(LinkedList<T> orElse) {
     return match(() -> orElse, (_, tail) -> tail);
   }
+  default <R> R fold(R acc, BiFunction<R, T, R> f) {
+    return match(
+        () -> acc,
+        (head, tail) -> tail.fold(f.apply(acc, head), f));
+  }
   default Tuple0 forEach(Consumer<T> c) {
     return match(
         () -> (Tuple0) this,
