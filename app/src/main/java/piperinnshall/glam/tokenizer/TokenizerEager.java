@@ -13,14 +13,20 @@ public interface TokenizerEager {
   default LinkedList<Token> tokenize() {
     try (BufferedReader reader = Files.newBufferedReader(this.path())) {
       LinkedListEmpty<Token> e = x -> x;
-      return tokenizeHelper(() -> sel -> sel.apply(reader, TokenizerLazy.empty), e);
+      InternalState empty = sel -> sel.apply(
+          s -> s.apply("", TokenType.INVALID, 0, 0),
+          "",
+          0,
+          0);
+
+      return tokenizeHelper(() -> sel -> sel.apply(() -> reader.lines(), empty), e);
     } catch (IOException e) {
       e.printStackTrace();
     }
     return (LinkedListEmpty<Token>) x -> x;
   }
 
-  private LinkedList<Token> tokenizeHelper(TokenizerLazy t, LinkedList<Token> acc) {
+  default LinkedList<Token> tokenizeHelper(TokenizerLazy t, LinkedList<Token> acc) {
     /* if (!t.hasNext()) {
       return acc.reverse();
     } else {
