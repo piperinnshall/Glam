@@ -4,7 +4,7 @@ import piperinnshall.glam.collections.LinkedList;
 import piperinnshall.glam.collections.LinkedListEmpty;
 
 public interface TokenType {
-  abstract String text();
+  abstract String toText();
 
   TokenType IDENTIFIER = () -> null;
   TokenType INVALID = () -> null;
@@ -107,6 +107,16 @@ public interface TokenType {
   }
 
   /**
+   * Finds longest existing token
+   */
+  private static int longest() {
+    return all()
+      .max(java.util.Comparator.comparingInt(t -> t.toText().length()), INVALID)
+      .toText()
+      .length();
+  }
+
+  /**
    * Finds largest matching token
    */
   public static TokenType contains(String s) {
@@ -114,9 +124,9 @@ public interface TokenType {
   }
 
   private static boolean isBest(String s, TokenType head, TokenType best) {
-    if (head.text() == null) return false;
-    if (!s.startsWith(head.text())) return false;
+    if (head.toText() == null) return false;
+    if (!s.startsWith(head.toText())) return false;
     if (best == null) return true;
-    return head.text().length() > best.text().length();
+    return head.toText().length() > best.toText().length();
   }
 }

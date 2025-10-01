@@ -60,6 +60,12 @@ public interface LinkedList<T> {
     default LinkedList<T> concat(LinkedList<T> other) {
         return foldR(other, (head, acc) -> acc.add(head));
     }
+
+    /** max using foldL */
+    default T max(java.util.Comparator<T> cmp, T orElse) {
+      return foldL(orElse, (best, next) -> cmp.compare(next, best) > 0 ? next : best);
+    }
+
 }
 
 interface Cons<T> extends LinkedList<T>, piperinnshall.glam.tuple.Tuple2<T, LinkedList<T>> {
