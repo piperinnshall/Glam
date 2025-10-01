@@ -3,6 +3,7 @@ package piperinnshall.glam.tokenizer;
 import piperinnshall.glam.collections.LinkedList;
 import piperinnshall.glam.collections.LinkedListEmpty;
 
+@FunctionalInterface
 public interface TokenType {
   abstract String toText();
 

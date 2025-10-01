@@ -24,24 +24,24 @@ public interface LinkedList<T> {
     }
 
     /** Fold left: processes from head to tail */
-    default <R> R foldL(R acc, BiFunction<R, T, R> f) {
+    default <R> R foldL(R orElse, BiFunction<R, T, R> f) {
         return match(
-            () -> acc,
-            (head, tail) -> tail.foldL(f.apply(acc, head), f)
+            () -> orElse,
+            (head, tail) -> tail.foldL(f.apply(orElse, head), f)
         );
     }
 
     /** Fold right: processes from tail to head */
-    default <R> R foldR(R acc, BiFunction<T, R, R> f) {
+    default <R> R foldR(R orElse, BiFunction<T, R, R> f) {
         return match(
-            () -> acc,
-            (head, tail) -> f.apply(head, tail.foldR(acc, f))
+            () -> orElse,
+            (head, tail) -> f.apply(head, tail.foldR(orElse, f))
         );
     }
 
-    /** forEach using foldL and functional Tuple0 */
+    /** forEach using foldL and functional Tuple0. */
     default Tuple0 forEach(Consumer<T> c) {
-        return foldL(_ -> null, (acc, t) -> { c.accept(t); return acc; });
+        return foldL(v -> v, (acc, t) -> { c.accept(t); return acc; });
     }
 
     /** reverse using foldL */
@@ -63,7 +63,7 @@ public interface LinkedList<T> {
 
     /** max using foldL */
     default T max(java.util.Comparator<T> cmp, T orElse) {
-      return foldL(orElse, (best, next) -> cmp.compare(next, best) > 0 ? next : best);
+        return foldL(orElse, (acc, next) -> cmp.compare(next, acc) > 0 ? next : acc);
     }
 
 }

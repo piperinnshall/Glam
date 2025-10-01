@@ -7,16 +7,16 @@ import java.nio.file.Path;
 
 import piperinnshall.glam.collections.LinkedList;
 import piperinnshall.glam.collections.LinkedListEmpty;
-import piperinnshall.glam.tuple.Token;
+import piperinnshall.glam.tuple.OldToken;
 
 public interface Tokenizer {
   abstract Path path();
-  default LinkedList<Token> tokenize() {
+  default LinkedList<OldToken> tokenize() {
     try (BufferedReader reader = Files.newBufferedReader(this.path())) {
       return ((TokenizeFile) () -> reader).tokenize();
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return (LinkedListEmpty<Token>) x -> x;
+    return (LinkedListEmpty<OldToken>) x -> x;
   }
 }

@@ -2,8 +2,8 @@ package piperinnshall.glam.tuple;
 
 import piperinnshall.glam.lexer.OldTokenType;
 
-public interface Token {
-  public static Token of(OldTokenType tokenType, String value, int line, int column) {
+public interface OldToken {
+  public static OldToken of(OldTokenType tokenType, String value, int line, int column) {
     return sel -> sel.apply(tokenType, value, line, column);
   }
   TokenUnion apply(TokenSelector sel);

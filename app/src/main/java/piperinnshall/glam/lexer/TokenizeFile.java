@@ -6,57 +6,57 @@ import java.util.Optional;
 
 import piperinnshall.glam.collections.LinkedList;
 import piperinnshall.glam.collections.LinkedListEmpty;
-import piperinnshall.glam.tuple.Token;
+import piperinnshall.glam.tuple.OldToken;
 
 public interface TokenizeFile {
   abstract BufferedReader r();
 
-  default LinkedList<Token> tokenize() throws IOException {
+  default LinkedList<OldToken> tokenize() throws IOException {
     int[] i = { 1 };
     return r().lines()
         .map(line -> {
           int y = i[0]++;
           return line(line, y);
-        }).reduce((LinkedListEmpty<Token>) l -> l, LinkedList::concat);
+        }).reduce((LinkedListEmpty<OldToken>) l -> l, LinkedList::concat);
   }
 
-  private static LinkedList<Token> line(String line, int y) {
-    return lineHelper(line, 0, y, (LinkedListEmpty<Token>) l -> l)
-        .add(Token.of(OldTokenType.NEWLINE, "\n", 0, line.length()))
+  private static LinkedList<OldToken> line(String line, int y) {
+    return lineHelper(line, 0, y, (LinkedListEmpty<OldToken>) l -> l)
+        .add(OldToken.of(OldTokenType.NEWLINE, "\n", 0, line.length()))
         .reverse();
   }
 
-  private static LinkedList<Token> lineHelper(String line, int x, int y, LinkedList<Token> acc) {
+  private static LinkedList<OldToken> lineHelper(String line, int x, int y, LinkedList<OldToken> acc) {
     if (x >= line.length()) return acc;
-    Token token = findAnyToken(line, x, y);
+    OldToken token = findAnyToken(line, x, y);
     return lineHelper(line, x + token.lexeme().length(), y, acc.add(token));
   }
 
-  private static Token findAnyToken(String line, int x, int y) {
+  private static OldToken findAnyToken(String line, int x, int y) {
     return findPresetToken(line, x, y)
         .or(() -> findIdentf(line, x, y))
         .or(() -> findLitNum(line, x, y))
         .or(() -> findLitStr(line, x, y))
-        .orElseGet(() -> Token.of(OldTokenType.INVALID, line.substring(x, x + 1), y, x));
+        .orElseGet(() -> OldToken.of(OldTokenType.INVALID, line.substring(x, x + 1), y, x));
   }
 
-  private static Optional<Token> findPresetToken(String line, int x, int y) {
+  private static Optional<OldToken> findPresetToken(String line, int x, int y) {
     return findPresetToken(line, x, y, OldTokenType.longestTokenLength());
   }
 
-  private static Optional<Token> findPresetToken(String line, int x, int y, int len) {
+  private static Optional<OldToken> findPresetToken(String line, int x, int y, int len) {
     if (len == 0) return Optional.empty();
     if (x + len > line.length()) return findPresetToken(line, x, y, len - 1);
     String sub = line.substring(x, x + len);
     OldTokenType type = OldTokenType.fromString(sub);
-    if (type != null) return Optional.of(Token.of(type, sub, y, x));
+    if (type != null) return Optional.of(OldToken.of(type, sub, y, x));
     return findPresetToken(line, x, y, len - 1);
   }
 
-  private static Optional<Token> findIdentf(String line, int x, int y) {
+  private static Optional<OldToken> findIdentf(String line, int x, int y) {
     if (!Character.isLetter(line.charAt(x))) return Optional.empty();
     String lexeme = findIdentf(line, x);
-    return Optional.of(Token.of(OldTokenType.IDENTIFIER, lexeme, y, x));
+    return Optional.of(OldToken.of(OldTokenType.IDENTIFIER, lexeme, y, x));
   }
 
   private static String findIdentf(String line, int pos) {
@@ -65,10 +65,10 @@ public interface TokenizeFile {
     return "";
   }
 
-  private static Optional<Token> findLitNum(String line, int x, int y) {
+  private static Optional<OldToken> findLitNum(String line, int x, int y) {
     if (!Character.isDigit(line.charAt(x))) return Optional.empty();
     String lexeme = findLitNum(line, x, false);
-    return Optional.of(Token.of(OldTokenType.LIT_NUM, lexeme, y, x));
+    return Optional.of(OldToken.of(OldTokenType.LIT_NUM, lexeme, y, x));
   }
 
   private static String findLitNum(String line, int pos, boolean dot) {
@@ -80,7 +80,7 @@ public interface TokenizeFile {
     return "";
   }
 
-  private static Optional<Token> findLitStr(String s, int start, int y) {
+  private static Optional<OldToken> findLitStr(String s, int start, int y) {
     if (s.charAt(start) != '"') return Optional.empty();
     int x = start + 1, br = 0;
     boolean esc = false, invalid = false;
@@ -95,6 +95,6 @@ public interface TokenizeFile {
     String lex = s.substring(start, x);
     OldTokenType t = (!invalid && br == 0) 
       ? OldTokenType.LIT_STR : OldTokenType.LIT_STR_INVALID;
-    return Optional.of(Token.of(t, lex, y, start));
+    return Optional.of(OldToken.of(t, lex, y, start));
   }
 }
