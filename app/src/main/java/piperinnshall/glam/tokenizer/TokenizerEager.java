@@ -13,7 +13,7 @@ public interface TokenizerEager {
   default LinkedList<Token> tokenize() {
     try (BufferedReader reader = Files.newBufferedReader(this.path())) {
       LinkedListEmpty<Token> e = x -> x;
-      return tokenizeHelper(() -> reader, e);
+      return tokenizeHelper(() -> sel -> sel.apply(reader, TokenizerLazy.empty), e);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -21,11 +21,12 @@ public interface TokenizerEager {
   }
 
   private LinkedList<Token> tokenizeHelper(TokenizerLazy t, LinkedList<Token> acc) {
-    if (!t.hasNext()) {
+    /* if (!t.hasNext()) {
       return acc.reverse();
     } else {
       Token token = t.popNext();
       return tokenizeHelper(t, acc.add(token));
-    }
+    } */
+    return acc;
   }
 }
