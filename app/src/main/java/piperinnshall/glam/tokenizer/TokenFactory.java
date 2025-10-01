@@ -11,6 +11,6 @@ public interface TokenFactory {
   }
 
   default void test() {
-    // Token t = 
+    Token t = sel -> sel.apply("nil", TokenType.INVALID, 0, 0);
   }
 }

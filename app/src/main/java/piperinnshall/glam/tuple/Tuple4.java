@@ -2,9 +2,6 @@ package piperinnshall.glam.tuple;
 
 public interface Tuple4<A, B, C, D> {
   Tuple4Union<A, B, C, D> apply(Tuple4Selector<A, B, C, D> sel);
-  static <A, B, C, D> Tuple4<A, B, C, D> of(A a, B b, C c, D d) {
-    return sel -> sel.apply(a, b, c, d);
-  }
   default A a() {
     Tuple4Selector<A, B, C, D> sel = (a, _, _, _) -> (Tuple4FromA<A, B, C, D>) () -> a;
     return this.apply(sel).toA();
